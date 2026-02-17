@@ -1,0 +1,52 @@
+from rest_framework import serializers
+from .models import TicketModel, ComentarioModel
+from datetime import date
+
+class TicketSerializer(serializers.ModelSerializer):
+    dias_abiertos = serializers.SerializerMethodField()
+
+    class Meta: 
+        model = TicketModel
+        field = ['titulo', 'descripcion', 'prioridad', 'estado', 'equipo', 'dias_abiertos']
+        read_only_field = ['codigo', 'fecha_cierre']
+    
+    def validate_equipo(self, value):
+        
+        if value.estado == 'dado_de_baja':
+            raise serializers.ValidationError(
+                {'error' : 'El equipo seleccionado esta dado de baja, no se puede crear el ticket'}
+            )
+
+        return value
+
+    def validate(self, data):
+        prioridad = data.get('prioridad')
+        descripcion = data.get('descripcion')
+
+        if prioridad != 'critica':
+            return data
+
+        if len(descripcion) < 50:
+            raise serializers.ValidationError(
+                {'error' : 'El ticket fue clasificado con un prioridad de nivel critico, la descripcion debe contener al menos 50 caracteres'}
+            )
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['equipo'] = {
+            'numero_serie' : instance.equipo.numero_serie,
+            'estado' : instance.equipo.estado
+        }
+
+        return representation
+
+    def get_dias_abiertos(self, instance):
+        fecha_creacion = instance.fecha_creacion.date()
+        fecha_actual = date.today()
+        diferencia = fecha_actual - fecha_creacion
+        return diferencia.days
+
+class ComentarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ComentarioModel
+        field = ['ticket', 'text']
