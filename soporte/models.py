@@ -17,18 +17,18 @@ ESTADO_TICKET = [
 
 
 class TicketModel (models.Model):
-    codigo = models.CharField(max_length=15, primary_key=True)
-    titulo = models.CharField()
+    codigo = models.CharField(max_length=15, unique=True)
+    titulo = models.CharField(max_length=100)
     descripcion = models.TextField()
     prioridad = models.CharField(max_length=20, choices=PRIORIDAD_TICKET)
     estado = models.CharField(max_length=20, choices=ESTADO_TICKET, default='abierto')
-    equipo = models.ForeignKey(EquipoModel, on_delete=models.CASCADE, related_name='equipo')
+    equipo = models.ForeignKey(EquipoModel, on_delete=models.CASCADE, related_name='tickets')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_cierre = models.DateTimeField(null=True, blank=True)
 
 
 class ComentarioModel (models.Model):
-    ticket = models.ForeignKey(TicketModel, on_delete=models.CASCADE, related_name='ticket')
-    text = models.TextField()
+    ticket = models.ForeignKey(TicketModel, on_delete=models.PROTECT, related_name='comentarios')
+    texto = models.TextField()
     es_interno = models.BooleanField(default=False)
     fecha = models.DateTimeField(auto_now_add=True)

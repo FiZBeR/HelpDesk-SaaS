@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from .models import TicketModel, ComentarioModel
-from datetime import date
+from django.utils import timezone
 
 class TicketSerializer(serializers.ModelSerializer):
     dias_abiertos = serializers.SerializerMethodField()
 
     class Meta: 
         model = TicketModel
-        field = ['titulo', 'descripcion', 'prioridad', 'estado', 'equipo', 'dias_abiertos']
-        read_only_field = ['codigo', 'fecha_cierre']
+        fields = ['titulo', 'descripcion', 'prioridad', 'estado', 'equipo', 'dias_abiertos']
+        read_only_fields = ['codigo', 'fecha_cierre']
     
     def validate_equipo(self, value):
         
@@ -30,6 +30,8 @@ class TicketSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'error' : 'El ticket fue clasificado con un prioridad de nivel critico, la descripcion debe contener al menos 50 caracteres'}
             )
+        
+        return data
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -41,12 +43,27 @@ class TicketSerializer(serializers.ModelSerializer):
         return representation
 
     def get_dias_abiertos(self, instance):
-        fecha_creacion = instance.fecha_creacion.date()
-        fecha_actual = date.today()
-        diferencia = fecha_actual - fecha_creacion
+        fecha_creacion = instance.fecha_creacion
+
+        if instance.estado == 'resuelto' and instance.fecha_cierre:
+            fecha_fin = instance.fecha_cierre
+        else :
+            fecha_fin = timezone.now()
+        
+        diferencia = fecha_fin - fecha_creacion
+
         return diferencia.days
 
 class ComentarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComentarioModel
-        field = ['ticket', 'text']
+        fields = ['ticket', 'texto']
+
+    def validate_ticket (self, value):
+        
+        if value.estado == 'resuelto':
+            raise serializers.ValidationError(
+                'el Ticket ya fue resuelto, no se pueden agregar mas comentarios.'
+            )
+        
+        return value

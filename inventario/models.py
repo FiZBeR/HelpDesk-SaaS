@@ -14,6 +14,6 @@ ESTADO_EQUIPO = [
 
 # Create your models here.
 class EquipoModel (models.Model):
-    numero_serie = models.CharField(max_length=20, primary_key=True)
+    numero_serie = models.CharField(max_length=20, unique=True)
     tipo = models.CharField(max_length=20, choices=TIPO_EQUIPO)
-    estado = models.CharField(max_length=20, choices=ESTADO_EQUIPO)
+    estado = models.CharField(max_length=20, choices=ESTADO_EQUIPO, default='operativo')
