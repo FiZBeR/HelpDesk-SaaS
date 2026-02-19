@@ -8,7 +8,7 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta: 
         model = TicketModel
         fields = ['titulo', 'descripcion', 'prioridad', 'estado', 'equipo', 'dias_abiertos']
-        read_only_fields = ['codigo', 'fecha_cierre']
+        read_only_fields = ['codigo', 'fecha_cierre', 'cliente']
     
     def validate_equipo(self, value):
         
