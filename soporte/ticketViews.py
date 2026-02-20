@@ -3,7 +3,6 @@ from .models import TicketModel
 from .serializer import TicketSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
-import uuid
 from django.utils import timezone
 
 # Create your views here.
@@ -13,11 +12,10 @@ class TicketViewSet (viewsets.ModelViewSet):
     serializer_class = TicketSerializer
 
     def perform_create(self, serializer):
-        year = timezone.now().year
-        codigo = str(uuid.uuid4())[:4].upper()
-        codigo_final = f"TK-{year}-{codigo}"
+        cliente = self.request.user
+       
         
-        serializer.save(codigo = codigo_final)
+        serializer.save(cliente = cliente, codigo = codigo_final)
     
     @action(detail=True, methods=['POST'])
     def resolver_ticket(self, request, pk=None):

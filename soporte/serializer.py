@@ -58,6 +58,7 @@ class ComentarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComentarioModel
         fields = ['ticket', 'texto']
+        read_only_fields = ['autor']
 
     def validate_ticket (self, value):
         
