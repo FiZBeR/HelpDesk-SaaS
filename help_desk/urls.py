@@ -20,11 +20,29 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView, # Este es tu LOGIN
     TokenRefreshView,    # Este es para renovar el token
 )
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework import permissions
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Helpdesk API",
+      default_version='v1',
+      description="Documentación de la API para el sistema de gestión de tickets",
+      contact=openapi.Contact(email="tu_correo@ejemplo.com"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('inventario.route')),
     path('api/', include('soporte.routers')),
+    path('api/', include('usuario.urls')),
     path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh')
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

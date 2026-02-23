@@ -13,9 +13,8 @@ class TicketViewSet (viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         cliente = self.request.user
-       
         
-        serializer.save(cliente = cliente, codigo = codigo_final)
+        serializer.save(cliente = cliente)
     
     @action(detail=True, methods=['POST'])
     def resolver_ticket(self, request, pk=None):
