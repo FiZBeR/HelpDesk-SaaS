@@ -28,7 +28,11 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-dev-key-123')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'https://help-desk-api-p3yx.onrender.com',
+    'localhost',
+    '127.0.0.1'
+]
 
 
 # Application definition
