@@ -1,13 +1,14 @@
 from rest_framework import serializers
 from .models import TicketModel, ComentarioModel
 from django.utils import timezone
+from usuario.serializer import UsuarioSerializer
 
 class TicketSerializer(serializers.ModelSerializer):
     dias_abiertos = serializers.SerializerMethodField()
 
     class Meta: 
         model = TicketModel
-        fields = ['titulo', 'descripcion', 'prioridad', 'estado', 'equipo', 'dias_abiertos']
+        fields = ['id', 'titulo', 'descripcion', 'prioridad', 'estado', 'equipo', 'dias_abiertos']
         read_only_fields = ['codigo_final', 'fecha_cierre', 'cliente']
     
     def validate_equipo(self, value):
@@ -37,7 +38,8 @@ class TicketSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['equipo'] = {
             'numero_serie' : instance.equipo.numero_serie,
-            'estado' : instance.equipo.estado
+            'estado' : instance.equipo.estado,
+            'tipo' : instance.equipo.tipo
         }
 
         return representation
@@ -55,9 +57,10 @@ class TicketSerializer(serializers.ModelSerializer):
         return diferencia.days
 
 class ComentarioSerializer(serializers.ModelSerializer):
+    autor = UsuarioSerializer(read_only=True);
     class Meta:
         model = ComentarioModel
-        fields = ['ticket', 'texto']
+        fields = ['ticket', 'texto', 'autor', 'fecha', 'id']
         read_only_fields = ['autor']
 
     def validate_ticket (self, value):

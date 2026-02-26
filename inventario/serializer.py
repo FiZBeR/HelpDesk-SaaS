@@ -4,4 +4,4 @@ from .models import EquipoModel
 class EquipoSerializer (serializers.ModelSerializer):
     class Meta:
         model = EquipoModel
-        fields = ['numero_serie', 'tipo', 'estado']
+        fields = ['id', 'numero_serie', 'tipo', 'estado']

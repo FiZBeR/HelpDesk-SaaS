@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions, status
 from .models import TicketModel
-from .serializer import TicketSerializer
+from .serializer import TicketSerializer, ComentarioSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.utils import timezone
@@ -53,9 +53,18 @@ class TicketViewSet (viewsets.ModelViewSet):
 
         return Response(
             {
-                'Tickets abiertos' : abiertos,
-                'Tickets en progreso' : en_progreso,
-                'Tickets resueltos' : resueltos
+                'tickets_abiertos' : abiertos,
+                'tickets_en_progreso' : en_progreso,
+                'tickets_resueltos' : resueltos
             },
             status = status.HTTP_200_OK
         )
+
+    @action(detail=True, methods=['get'])
+    def comentarios(self, request, pk=None):
+        ticket = self.get_object()
+        # Usamos el related_name que definimos en el modelo
+        comentarios = ticket.comentarios.all().order_by('-fecha')
+        
+        serializer = ComentarioSerializer(comentarios, many=True)
+        return Response(serializer.data)
