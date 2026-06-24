@@ -20,6 +20,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView, # Este es tu LOGIN
     TokenRefreshView,    # Este es para renovar el token
 )
+from django.http import HttpResponse
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
@@ -37,6 +38,7 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
+    path('/', lambda request: HttpResponse('ok', status=200)),
     path('admin/', admin.site.urls),
     path('api/', include('inventario.route')),
     path('api/', include('soporte.routers')),
