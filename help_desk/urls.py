@@ -38,7 +38,7 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
-    path('/', lambda request: HttpResponse('ok', status=200)),
+    path('', lambda request: HttpResponse('ok', status=200)),
     path('admin/', admin.site.urls),
     path('api/', include('inventario.route')),
     path('api/', include('soporte.routers')),
